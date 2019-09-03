@@ -8,3 +8,13 @@ c:\users\kreed\documents\visual studio 2010\Projects\System.Linq.Dynamic\System.
 c:\users\kreed\documents\visual studio 2010\Projects\System.Linq.Dynamic\System.Linq.Dynamic\obj\Debug\System.Linq.Dynamic.dll
 c:\users\kreed\documents\visual studio 2010\Projects\System.Linq.Dynamic\System.Linq.Dynamic\obj\Debug\System.Linq.Dynamic.xml
 c:\users\kreed\documents\visual studio 2010\Projects\System.Linq.Dynamic\System.Linq.Dynamic\obj\Debug\System.Linq.Dynamic.pdb
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\obj\Debug\Resources.resources
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\obj\Debug\System.Linq.Dynamic.vbproj.GenerateResource.cache
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\obj\Debug\System.Linq.Dynamic.vbproj.CoreCompileInputs.cache
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\obj\Debug\System.Linq.Dynamic.vbprojAssemblyReference.cache
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\bin\Debug\System.Linq.Dynamic.3.5.dll
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\bin\Debug\System.Linq.Dynamic.3.5.pdb
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\bin\Debug\System.Linq.Dynamic.3.5.xml
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\obj\Debug\System.Linq.Dynamic.3.5.dll
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\obj\Debug\System.Linq.Dynamic.3.5.xml
+C:\Development\System.Linq.Dynamic.3.5\src\System.Linq.Dynamic\obj\Debug\System.Linq.Dynamic.3.5.pdb

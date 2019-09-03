@@ -7,48 +7,48 @@ Imports System.Reflection.Emit
 Imports System.Threading
 Imports System.Runtime.CompilerServices
 
-Namespace System.Linq.Dynamic
+Namespace System.Linq.Dynamic35
     Public Module DynamicQueryable
 
-        <Extension()> _
+        <Extension()>
         Public Function Where(Of T)(ByVal source As IQueryable(Of T), ByVal predicate As String, ByVal ParamArray values() As Object) As IQueryable(Of T)
             Return DirectCast(Where(DirectCast(source, IQueryable), predicate, values), IQueryable(Of T))
         End Function
 
-        <Extension()> _
+        <Extension()>
         Public Function Where(ByVal source As IQueryable, ByVal predicate As String, ByVal ParamArray values() As Object) As IQueryable
             If source Is Nothing Then Throw New ArgumentNullException("source")
             If predicate Is Nothing Then Throw New ArgumentNullException("predicate")
             Dim lambda As LambdaExpression = DynamicExpression.ParseLambda(source.ElementType, GetType(Boolean), predicate, values)
-            Return source.Provider.CreateQuery( _
-                Expression.Call( _
-                    GetType(Queryable), "Where", _
-                    New Type() {source.ElementType}, _
+            Return source.Provider.CreateQuery(
+                Expression.Call(
+                    GetType(Queryable), "Where",
+                    New Type() {source.ElementType},
                     source.Expression, Expression.Quote(lambda)))
         End Function
 
-        <Extension()> _
+        <Extension()>
         Public Function [Select](ByVal source As IQueryable, ByVal selector As String, ByVal ParamArray values() As Object) As IQueryable
             If source Is Nothing Then Throw New ArgumentNullException("source")
             If selector Is Nothing Then Throw New ArgumentNullException("selector")
             Dim lambda As LambdaExpression = DynamicExpression.ParseLambda(source.ElementType, Nothing, selector, values)
-            Return source.Provider.CreateQuery( _
-                Expression.Call( _
-                    GetType(Queryable), "Select", _
-                    New Type() {source.ElementType, lambda.Body.Type}, _
+            Return source.Provider.CreateQuery(
+                Expression.Call(
+                    GetType(Queryable), "Select",
+                    New Type() {source.ElementType, lambda.Body.Type},
                     source.Expression, Expression.Quote(lambda)))
         End Function
 
-        <Extension()> _
+        <Extension()>
         Public Function OrderBy(Of T)(ByVal source As IQueryable(Of T), ByVal ordering As String, ByVal ParamArray values() As Object) As IQueryable(Of T)
             Return DirectCast(OrderBy(DirectCast(source, IQueryable), ordering, values), IQueryable(Of T))
         End Function
 
-        <Extension()> _
+        <Extension()>
         Public Function OrderBy(ByVal source As IQueryable, ByVal ordering As String, ByVal ParamArray values() As Object) As IQueryable
             If (source Is Nothing) Then Throw New ArgumentNullException("source")
             If (ordering Is Nothing) Then Throw New ArgumentNullException("ordering")
-            Dim parameters = New ParameterExpression() { _
+            Dim parameters = New ParameterExpression() {
                 Expression.Parameter(source.ElementType, "")}
             Dim parser As New ExpressionParser(parameters, ordering, values)
             Dim orderings As IEnumerable(Of DynamicOrdering) = parser.ParseOrdering()
@@ -56,9 +56,9 @@ Namespace System.Linq.Dynamic
             Dim methodAsc = "OrderBy"
             Dim methodDesc = "OrderByDescending"
             For Each o As DynamicOrdering In orderings
-                queryExpr = Expression.Call( _
-                    GetType(Queryable), If(o.Ascending, methodAsc, methodDesc), _
-                    New Type() {source.ElementType, o.Selector.Type}, _
+                queryExpr = Expression.Call(
+                    GetType(Queryable), If(o.Ascending, methodAsc, methodDesc),
+                    New Type() {source.ElementType, o.Selector.Type},
                     queryExpr, Expression.Quote(Expression.Lambda(o.Selector, parameters)))
                 methodAsc = "ThenBy"
                 methodDesc = "ThenByDescending"
@@ -66,55 +66,55 @@ Namespace System.Linq.Dynamic
             Return source.Provider.CreateQuery(queryExpr)
         End Function
 
-        <Extension()> _
+        <Extension()>
         Public Function Take(ByVal source As IQueryable, ByVal count As Integer) As IQueryable
             If (source Is Nothing) Then Throw New ArgumentNullException("source")
-            Return source.Provider.CreateQuery( _
-                Expression.Call( _
-                    GetType(Queryable), "Take", _
-                    New Type() {source.ElementType}, _
+            Return source.Provider.CreateQuery(
+                Expression.Call(
+                    GetType(Queryable), "Take",
+                    New Type() {source.ElementType},
                     source.Expression, Expression.Constant(count)))
         End Function
 
-        <Extension()> _
+        <Extension()>
         Public Function Skip(ByVal source As IQueryable, ByVal count As Integer) As IQueryable
             If (source Is Nothing) Then Throw New ArgumentNullException("source")
-            Return source.Provider.CreateQuery( _
-                Expression.Call( _
-                    GetType(Queryable), "Skip", _
-                    New Type() {source.ElementType}, _
+            Return source.Provider.CreateQuery(
+                Expression.Call(
+                    GetType(Queryable), "Skip",
+                    New Type() {source.ElementType},
                     source.Expression, Expression.Constant(count)))
         End Function
 
-        <Extension()> _
+        <Extension()>
         Public Function GroupBy(ByVal source As IQueryable, ByVal keySelector As String, ByVal elementSelector As String, ByVal ParamArray values() As Object) As IQueryable
             If (source Is Nothing) Then Throw New ArgumentNullException("source")
             If (keySelector Is Nothing) Then Throw New ArgumentNullException("keySelector")
             If (elementSelector Is Nothing) Then Throw New ArgumentNullException("elementSelector")
             Dim keyLambda As LambdaExpression = DynamicExpression.ParseLambda(source.ElementType, Nothing, keySelector, values)
             Dim elementLambda As LambdaExpression = DynamicExpression.ParseLambda(source.ElementType, Nothing, elementSelector, values)
-            Return source.Provider.CreateQuery( _
-                Expression.Call( _
-                    GetType(Queryable), "GroupBy", _
-                    New Type() {source.ElementType, keyLambda.Body.Type, elementLambda.Body.Type}, _
+            Return source.Provider.CreateQuery(
+                Expression.Call(
+                    GetType(Queryable), "GroupBy",
+                    New Type() {source.ElementType, keyLambda.Body.Type, elementLambda.Body.Type},
                     source.Expression, Expression.Quote(keyLambda), Expression.Quote(elementLambda)))
         End Function
 
-        <Extension()> _
+        <Extension()>
         Public Function Any(ByVal source As IQueryable) As Boolean
             If (source Is Nothing) Then Throw New ArgumentNullException("source")
-            Return CBool(source.Provider.Execute( _
-                Expression.Call( _
-                    GetType(Queryable), "Any", _
+            Return CBool(source.Provider.Execute(
+                Expression.Call(
+                    GetType(Queryable), "Any",
                     New Type() {source.ElementType}, source.Expression)))
         End Function
 
-        <Extension()> _
+        <Extension()>
         Public Function Count(ByVal source As IQueryable) As Integer
             If (source Is Nothing) Then Throw New ArgumentNullException("source")
-            Return CInt(source.Provider.Execute( _
-                Expression.Call( _
-                    GetType(Queryable), "Count", _
+            Return CInt(source.Provider.Execute(
+                Expression.Call(
+                    GetType(Queryable), "Count",
                     New Type() {source.ElementType}, source.Expression)))
         End Function
     End Module
@@ -215,10 +215,10 @@ Namespace System.Linq.Dynamic
             Return If(cast IsNot Nothing, Equals(cast), False)
         End Function
 
-        Public Overloads Function Equals(ByVal other As Signature) As Boolean Implements IEquatable(Of System.Linq.Dynamic.Signature).Equals
+        Public Overloads Function Equals(ByVal other As Signature) As Boolean Implements IEquatable(Of Signature).Equals
             If (properties.Length <> other.properties.Length) Then Return False
             For i As Integer = 0 To properties.Length - 1
-                If (properties(i).Name <> other.properties(i).Name OrElse _
+                If (properties(i).Name <> other.properties(i).Name OrElse
                     Not properties(i).Type.Equals(other.properties(i).Type)) Then
                     Return False
                 End If
@@ -280,7 +280,7 @@ Namespace System.Linq.Dynamic
                 Call New ReflectionPermission(PermissionState.Unrestricted).Assert()
 #End If
                 Try
-                    Dim tb As TypeBuilder = Me.module.DefineType(typeName, TypeAttributes.Class Or _
+                    Dim tb As TypeBuilder = Me.module.DefineType(typeName, TypeAttributes.Class Or
                         TypeAttributes.Public, GetType(DynamicClass))
                     Dim fields() As FieldInfo = GenerateProperties(tb, properties)
                     GenerateEquals(tb, fields)
@@ -305,15 +305,15 @@ Namespace System.Linq.Dynamic
                 Dim dp As DynamicProperty = properties(i)
                 Dim fb As FieldBuilder = tb.DefineField("_" & dp.Name, dp.Type, FieldAttributes.Private)
                 Dim pb As PropertyBuilder = tb.DefineProperty(dp.Name, PropertyAttributes.HasDefault, dp.Type, Nothing)
-                Dim mbGet As MethodBuilder = tb.DefineMethod("get_" + dp.Name, _
-                    MethodAttributes.Public Or MethodAttributes.SpecialName Or MethodAttributes.HideBySig, _
+                Dim mbGet As MethodBuilder = tb.DefineMethod("get_" + dp.Name,
+                    MethodAttributes.Public Or MethodAttributes.SpecialName Or MethodAttributes.HideBySig,
                     dp.Type, Type.EmptyTypes)
                 Dim genGet As ILGenerator = mbGet.GetILGenerator()
                 genGet.Emit(OpCodes.Ldarg_0)
                 genGet.Emit(OpCodes.Ldfld, fb)
                 genGet.Emit(OpCodes.Ret)
-                Dim mbSet As MethodBuilder = tb.DefineMethod("set_" & dp.Name, _
-                    MethodAttributes.Public Or MethodAttributes.SpecialName Or MethodAttributes.HideBySig, _
+                Dim mbSet As MethodBuilder = tb.DefineMethod("set_" & dp.Name,
+                    MethodAttributes.Public Or MethodAttributes.SpecialName Or MethodAttributes.HideBySig,
                     Nothing, New Type() {dp.Type})
                 Dim genSet As ILGenerator = mbSet.GetILGenerator()
                 genSet.Emit(OpCodes.Ldarg_0)
@@ -329,9 +329,9 @@ Namespace System.Linq.Dynamic
         End Function
 
         Private Sub GenerateEquals(ByVal tb As TypeBuilder, ByVal fields As FieldInfo())
-            Dim mb As MethodBuilder = tb.DefineMethod("Equals", _
-                MethodAttributes.Public Or MethodAttributes.ReuseSlot Or _
-                MethodAttributes.Virtual Or MethodAttributes.HideBySig, _
+            Dim mb As MethodBuilder = tb.DefineMethod("Equals",
+                MethodAttributes.Public Or MethodAttributes.ReuseSlot Or
+                MethodAttributes.Virtual Or MethodAttributes.HideBySig,
                 GetType(Boolean), New Type() {GetType(Object)})
             Dim gen As ILGenerator = mb.GetILGenerator()
             Dim other As LocalBuilder = gen.DeclareLocal(tb)
@@ -364,9 +364,9 @@ Namespace System.Linq.Dynamic
         End Sub
 
         Private Sub GenerateGetHashCode(ByVal tb As TypeBuilder, ByVal fields As FieldInfo())
-            Dim mb As MethodBuilder = tb.DefineMethod("GetHashCode", _
-                MethodAttributes.Public Or MethodAttributes.ReuseSlot Or _
-                MethodAttributes.Virtual Or MethodAttributes.HideBySig, _
+            Dim mb As MethodBuilder = tb.DefineMethod("GetHashCode",
+                MethodAttributes.Public Or MethodAttributes.ReuseSlot Or
+                MethodAttributes.Virtual Or MethodAttributes.HideBySig,
                 GetType(Integer), Type.EmptyTypes)
             Dim gen As ILGenerator = mb.GetILGenerator()
             gen.Emit(OpCodes.Ldc_I4_0)
@@ -542,27 +542,27 @@ Namespace System.Linq.Dynamic
             Sub Average(ByVal selector? As Decimal)
         End Interface
 
-        Shared ReadOnly predefinedTypes As Type() = { _
-            GetType(Object), _
-            GetType(Boolean), _
-            GetType(Char), _
-            GetType(String), _
-            GetType(SByte), _
-            GetType(Byte), _
-            GetType(Int16), _
-            GetType(UInt16), _
-            GetType(Int32), _
-            GetType(UInt32), _
-            GetType(Int64), _
-            GetType(UInt64), _
-            GetType(Single), _
-            GetType(Double), _
-            GetType(Decimal), _
-            GetType(DateTime), _
-            GetType(TimeSpan), _
-            GetType(Guid), _
-            GetType(Math), _
-            GetType(Convert) _
+        Shared ReadOnly predefinedTypes As Type() = {
+            GetType(Object),
+            GetType(Boolean),
+            GetType(Char),
+            GetType(String),
+            GetType(SByte),
+            GetType(Byte),
+            GetType(Int16),
+            GetType(UInt16),
+            GetType(Int32),
+            GetType(UInt32),
+            GetType(Int64),
+            GetType(UInt64),
+            GetType(Single),
+            GetType(Double),
+            GetType(Decimal),
+            GetType(DateTime),
+            GetType(TimeSpan),
+            GetType(Guid),
+            GetType(Math),
+            GetType(Convert)
         }
 
         Shared ReadOnly trueLiteral As Expression = Expression.Constant(True)
@@ -705,14 +705,14 @@ Namespace System.Linq.Dynamic
         ' =, ==, !=, <>, >, >=, <, <= operators
         Function ParseComparison() As Expression
             Dim left As Expression = ParseAdditive()
-            Do While tokenVal.id = TokenId.Equal OrElse tokenVal.id = TokenId.DoubleEqual OrElse _
-                tokenVal.id = TokenId.ExclamationEqual OrElse tokenVal.id = TokenId.LessGreater OrElse _
-                tokenVal.id = TokenId.GreaterThan OrElse tokenVal.id = TokenId.GreaterThanEqual OrElse _
+            Do While tokenVal.id = TokenId.Equal OrElse tokenVal.id = TokenId.DoubleEqual OrElse
+                tokenVal.id = TokenId.ExclamationEqual OrElse tokenVal.id = TokenId.LessGreater OrElse
+                tokenVal.id = TokenId.GreaterThan OrElse tokenVal.id = TokenId.GreaterThanEqual OrElse
                 tokenVal.id = TokenId.LessThan OrElse tokenVal.id = TokenId.LessThanEqual
                 Dim op As Token = tokenVal
                 NextToken()
                 Dim right As Expression = ParseAdditive()
-                Dim isEquality As Boolean = (op.id = TokenId.Equal OrElse op.id = TokenId.DoubleEqual OrElse _
+                Dim isEquality As Boolean = (op.id = TokenId.Equal OrElse op.id = TokenId.DoubleEqual OrElse
                     op.id = TokenId.ExclamationEqual OrElse op.id = TokenId.LessGreater)
                 If isEquality AndAlso Not left.Type.IsValueType AndAlso Not right.Type.IsValueType Then
                     If Not left.Type.Equals(right.Type) Then
@@ -738,7 +738,7 @@ Namespace System.Linq.Dynamic
                         End If
                     End If
                 Else
-                    CheckAndPromoteOperands(If(isEquality, GetType(IEqualitySignatures), GetType(IRelationalSignatures)), _
+                    CheckAndPromoteOperands(If(isEquality, GetType(IEqualitySignatures), GetType(IRelationalSignatures)),
                         op.text, left, right, op.pos)
                 End If
                 Select Case op.id
@@ -762,7 +762,7 @@ Namespace System.Linq.Dynamic
         ' +, -, & operators
         Function ParseAdditive() As Expression
             Dim left = ParseMultiplicative()
-            Do While tokenVal.id = TokenId.Plus OrElse tokenVal.id = TokenId.Minus OrElse _
+            Do While tokenVal.id = TokenId.Plus OrElse tokenVal.id = TokenId.Minus OrElse
                 tokenVal.id = TokenId.Amphersand
                 Dim op = tokenVal
                 NextToken()
@@ -788,7 +788,7 @@ amphersand:
         ' *, /, %, mod operators
         Function ParseMultiplicative() As Expression
             Dim left = ParseUnary()
-            Do While tokenVal.id = TokenId.Asterisk OrElse tokenVal.id = TokenId.Slash OrElse _
+            Do While tokenVal.id = TokenId.Asterisk OrElse tokenVal.id = TokenId.Slash OrElse
                 tokenVal.id = TokenId.Percent OrElse TokenIdentifierIs("mod")
                 Dim op = tokenVal
                 NextToken()
@@ -808,12 +808,12 @@ amphersand:
 
         ' -, !, not unary operators
         Function ParseUnary() As Expression
-            If tokenVal.id = TokenId.Minus OrElse tokenVal.id = TokenId.Exclamation OrElse _
+            If tokenVal.id = TokenId.Minus OrElse tokenVal.id = TokenId.Exclamation OrElse
                 TokenIdentifierIs("not") Then
 
                 Dim op = tokenVal
                 NextToken()
-                If op.id = TokenId.Minus AndAlso (tokenVal.id = TokenId.IntegerLiteral OrElse _
+                If op.id = TokenId.Minus AndAlso (tokenVal.id = TokenId.IntegerLiteral OrElse
                             tokenVal.id = TokenId.RealLiteral) Then
                     tokenVal.text = "-" & tokenVal.text
                     tokenVal.pos = op.pos
@@ -962,7 +962,7 @@ amphersand:
                 Return DirectCast(value, Expression)
             End If
 
-            If symbols.TryGetValue(tokenVal.text, value) OrElse _
+            If symbols.TryGetValue(tokenVal.text, value) OrElse
                 externals IsNot Nothing AndAlso externals.TryGetValue(tokenVal.text, value) Then
                 Dim expr = TryCast(value, Expression)
                 If expr Is Nothing Then
@@ -1097,22 +1097,22 @@ amphersand:
             Dim exprType = expr.Type
             If exprType.Equals(type) Then Return expr
             If exprType.IsValueType AndAlso type.IsValueType Then
-                If (IsNullableType(exprType) OrElse IsNullableType(type)) AndAlso _
-                    GetNonNullableType(exprType).equals(GetNonNullableType(type)) Then
+                If (IsNullableType(exprType) OrElse IsNullableType(type)) AndAlso
+                    GetNonNullableType(exprType).Equals(GetNonNullableType(type)) Then
 
                     Return Expression.Convert(expr, type)
                 End If
-                If (IsNumericType(exprType) OrElse IsEnumType(exprType)) AndAlso _
+                If (IsNumericType(exprType) OrElse IsEnumType(exprType)) AndAlso
                     (IsNumericType(type) OrElse IsEnumType(type)) Then
 
                     Return Expression.ConvertChecked(expr, type)
                 End If
             End If
-            If exprType.IsAssignableFrom(type) OrElse type.IsAssignableFrom(exprType) OrElse _
+            If exprType.IsAssignableFrom(type) OrElse type.IsAssignableFrom(exprType) OrElse
                 exprType.IsInterface OrElse type.IsInterface Then
                 Return Expression.Convert(expr, type)
             End If
-            Throw ParseError(errorPos, Res.CannotConvertValue, _
+            Throw ParseError(errorPos, Res.CannotConvertValue,
                 GetTypeName(exprType), GetTypeName(type))
         End Function
 
@@ -1152,8 +1152,8 @@ amphersand:
                 If member Is Nothing Then
                     Throw ParseError(errorPos, Res.UnknownPropertyOrField, id, GetTypeName(type))
                 End If
-                Return If(TryCast(member, PropertyInfo) IsNot Nothing, _
-                    Expression.Property(instance, DirectCast(member, PropertyInfo)), _
+                Return If(TryCast(member, PropertyInfo) IsNot Nothing,
+                    Expression.Property(instance, DirectCast(member, PropertyInfo)),
                     Expression.Field(instance, DirectCast(member, FieldInfo)))
             End If
         End Function
@@ -1323,21 +1323,21 @@ amphersand:
         End Function
 
         Function FindPropertyOrField(ByVal type As Type, ByVal memberName As String, ByVal staticAccess As Boolean) As MemberInfo
-            Dim flags As BindingFlags = BindingFlags.Public Or BindingFlags.DeclaredOnly Or _
+            Dim flags As BindingFlags = BindingFlags.Public Or BindingFlags.DeclaredOnly Or
                 If(staticAccess, BindingFlags.Static, BindingFlags.Instance)
-            For Each t As Type In SelfAndBaseTypes(Type)
-                Dim members As MemberInfo() = t.FindMembers(MemberTypes.Property Or MemberTypes.Field, _
-                    flags, type.FilterNameIgnoreCase, memberName)
+            For Each t As Type In SelfAndBaseTypes(type)
+                Dim members As MemberInfo() = t.FindMembers(MemberTypes.Property Or MemberTypes.Field,
+                    flags, Type.FilterNameIgnoreCase, memberName)
                 If members.Length <> 0 Then Return members(0)
             Next
             Return Nothing
         End Function
 
         Function FindMethod(ByVal type As Type, ByVal methodName As String, ByVal staticAccess As Boolean, ByVal args As Expression(), ByRef method As MethodBase) As Integer
-            Dim flags As BindingFlags = BindingFlags.Public Or BindingFlags.DeclaredOnly Or _
+            Dim flags As BindingFlags = BindingFlags.Public Or BindingFlags.DeclaredOnly Or
                 If(staticAccess, BindingFlags.Static, BindingFlags.Instance)
             For Each t As Type In SelfAndBaseTypes(type)
-                Dim members As MemberInfo() = t.FindMembers(MemberTypes.Method, _
+                Dim members As MemberInfo() = t.FindMembers(MemberTypes.Method,
                     flags, Type.FilterNameIgnoreCase, methodName)
                 Dim count As Integer = FindBestMethod(members.Cast(Of MethodBase)(), args, method)
                 If count <> 0 Then Return count
@@ -1350,9 +1350,9 @@ amphersand:
             For Each t As Type In SelfAndBaseTypes(type)
                 Dim members As MemberInfo() = t.GetDefaultMembers()
                 If members.Length <> 0 Then
-                    Dim methods As IEnumerable(Of MethodBase) = members. _
-                        OfType(Of PropertyInfo)(). _
-                        Select(Function(p) DirectCast(p.GetGetMethod(), MethodBase)). _
+                    Dim methods As IEnumerable(Of MethodBase) = members.
+                        OfType(Of PropertyInfo)().
+                        Select(Function(p) DirectCast(p.GetGetMethod(), MethodBase)).
                         Where(Function(m) m IsNot Nothing)
                     Dim count As Integer = FindBestMethod(methods, args, method)
                     If count <> 0 Then Return count
@@ -1398,13 +1398,13 @@ amphersand:
         End Class
 
         Function FindBestMethod(ByVal methods As IEnumerable(Of MethodBase), ByVal args As Expression(), ByRef method As MethodBase) As Integer
-            Dim applicable As MethodData() = methods. _
-                Select(Function(m) New MethodData With {.MethodBase = m, .Parameters = m.GetParameters()}). _
-                Where(Function(m) IsApplicable(m, args)). _
+            Dim applicable As MethodData() = methods.
+                Select(Function(m) New MethodData With {.MethodBase = m, .Parameters = m.GetParameters()}).
+                Where(Function(m) IsApplicable(m, args)).
                 ToArray()
             If applicable.Length > 1 Then
-                applicable = applicable. _
-                    Where(Function(m) applicable.All(Function(n) m Is n OrElse IsBetterThan(args, m, n))). _
+                applicable = applicable.
+                    Where(Function(m) applicable.All(Function(n) m Is n OrElse IsBetterThan(args, m, n))).
                     ToArray()
             End If
             If applicable.Length = 1 Then
@@ -1509,8 +1509,8 @@ amphersand:
 
         Shared Function ParseEnum(ByVal name As String, ByVal type As Type) As Object
             If type.IsEnum Then
-                Dim memberInfos As MemberInfo() = type.FindMembers(MemberTypes.Field, _
-                    BindingFlags.Public Or BindingFlags.DeclaredOnly Or BindingFlags.Static, _
+                Dim memberInfos As MemberInfo() = type.FindMembers(MemberTypes.Field,
+                    BindingFlags.Public Or BindingFlags.DeclaredOnly Or BindingFlags.Static,
                     Type.FilterNameIgnoreCase, name)
                 If memberInfos.Length <> 0 Then Return DirectCast(memberInfos(0), FieldInfo).GetValue(Nothing)
             End If
@@ -1581,8 +1581,8 @@ amphersand:
         Shared Function IsBetterThan(ByVal args As Expression(), ByVal m1 As MethodData, ByVal m2 As MethodData) As Boolean
             Dim better = False
             For i As Integer = 0 To args.Length - 1
-                Dim c As Integer = CompareConversions(args(i).Type, _
-                    m1.Parameters(i).ParameterType, _
+                Dim c As Integer = CompareConversions(args(i).Type,
+                    m1.Parameters(i).ParameterType,
                     m2.Parameters(i).ParameterType)
                 If c < 0 Then Return False
                 If c > 0 Then better = True
@@ -1594,9 +1594,9 @@ amphersand:
         ' Return -1 if s -> t2 is a better conversion than s -> t1
         ' Return 0 if neither conversion is better
         Shared Function CompareConversions(ByVal s As Type, ByVal t1 As Type, ByVal t2 As Type) As Integer
-            If t1.equals(t2) Then Return 0
-            If s.equals(t1) Then Return 1
-            If s.equals(t2) Then Return -1
+            If t1.Equals(t2) Then Return 0
+            If s.Equals(t1) Then Return 1
+            If s.Equals(t2) Then Return -1
             Dim t1t2 As Boolean = IsCompatibleWith(t1, t2)
             Dim t2t1 As Boolean = IsCompatibleWith(t2, t1)
             If t1t2 AndAlso Not t2t1 Then Return 1
@@ -1616,17 +1616,17 @@ amphersand:
 
         Function GenerateGreaterThan(ByVal left As Expression, ByVal right As Expression) As Expression
             If left.Type.Equals(GetType(String)) Then
-                Return Expression.GreaterThan( _
-                    GenerateStaticMethodCall("Compare", left, right), _
+                Return Expression.GreaterThan(
+                    GenerateStaticMethodCall("Compare", left, right),
                     Expression.Constant(0))
             End If
             Return Expression.GreaterThan(left, right)
         End Function
 
         Function GenerateGreaterThanEqual(ByVal left As Expression, ByVal right As Expression) As Expression
-            If Left.Type.equals(GetType(String)) Then
-                Return Expression.GreaterThanOrEqual( _
-                    GenerateStaticMethodCall("Compare", left, right), _
+            If left.Type.Equals(GetType(String)) Then
+                Return Expression.GreaterThanOrEqual(
+                    GenerateStaticMethodCall("Compare", left, right),
                     Expression.Constant(0))
             End If
             Return Expression.GreaterThanOrEqual(left, right)
@@ -1634,8 +1634,8 @@ amphersand:
 
         Function GenerateLessThan(ByVal left As Expression, ByVal right As Expression) As Expression
             If left.Type.Equals(GetType(String)) Then
-                Return Expression.LessThan( _
-                    GenerateStaticMethodCall("Compare", left, right), _
+                Return Expression.LessThan(
+                    GenerateStaticMethodCall("Compare", left, right),
                     Expression.Constant(0))
             End If
             Return Expression.LessThan(left, right)
@@ -1643,32 +1643,32 @@ amphersand:
 
         Function GenerateLessThanEqual(ByVal left As Expression, ByVal right As Expression) As Expression
             If left.Type.Equals(GetType(String)) Then
-                Return Expression.LessThanOrEqual( _
-                    GenerateStaticMethodCall("Compare", left, right), _
+                Return Expression.LessThanOrEqual(
+                    GenerateStaticMethodCall("Compare", left, right),
                     Expression.Constant(0))
             End If
             Return Expression.LessThanOrEqual(left, right)
         End Function
 
         Function GenerateAdd(ByVal left As Expression, ByVal right As Expression) As Expression
-            If left.Type.Equals(GetType(String)) AndAlso right.Type.equals(GetType(String)) Then
+            If left.Type.Equals(GetType(String)) AndAlso right.Type.Equals(GetType(String)) Then
                 Return GenerateStaticMethodCall("Concat", left, right)
             End If
             Return Expression.Add(left, right)
         End Function
 
-        Function GenerateSubtract(ByVal left As Expression, ByVal right As expression) As Expression
-            Return Expression.Subtract(Left, Right)
+        Function GenerateSubtract(ByVal left As Expression, ByVal right As Expression) As Expression
+            Return Expression.Subtract(left, right)
         End Function
 
         Function GenerateStringConcat(ByVal left As Expression, ByVal right As Expression) As Expression
-            Return Expression.Call( _
-                Nothing, _
-                GetType(String).GetMethod("Concat", New Type() {GetType(Object), GetType(Object)}), _
+            Return Expression.Call(
+                Nothing,
+                GetType(String).GetMethod("Concat", New Type() {GetType(Object), GetType(Object)}),
                 New Expression() {left, right})
         End Function
 
-        Function GetStaticMethod(ByVal methodName As String, ByVal left As expression, ByVal right As expression) As MethodInfo
+        Function GetStaticMethod(ByVal methodName As String, ByVal left As Expression, ByVal right As Expression) As MethodInfo
             Return left.Type.GetMethod(methodName, New Type() {left.Type, right.Type})
         End Function
 
